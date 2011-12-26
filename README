@@ -1,0 +1,7 @@
+Usage
+=====
+
+Start main.js using node.js:
+ $ node-dev main.js
+ 
+Open main.html in a browser.
