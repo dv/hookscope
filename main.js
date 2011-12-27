@@ -7,7 +7,7 @@ io.sockets.on('connection', function(socket) {
 	socket.on('set channel', function(channel) {
 		socket.set('channel', channel, function () {
 			console.log("Creating channel " + channel);
-			cons["channel" + channel] = this;	
+			cons["channel" + channel] = socket;	
 		});
 	});
 
@@ -25,7 +25,7 @@ var url = require('url');
 
 http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.end('Hello World\n');
+  res.end('ok\n');
 
   dataObject = {};
   dataObject.url = url.parse(req.url, true);
@@ -33,5 +33,17 @@ http.createServer(function (req, res) {
   dataObject.httpVersion = req.httpVersion;
   dataObject.method = req.method;
 
-  io.sockets.emit("request", dataObject);
+  if (req.headers["host"]) {
+    dataObject.channel = req.headers["host"].split(".")[0];   
+    
+    if (cons["channel" + dataObject.channel]) {
+      console.log("Received request for channel '" + dataObject.channel + "'. Emit.");
+      cons["channel" + dataObject.channel].emit("request", dataObject);
+    } else {
+      console.log("Recieved request for unknown channel '" + dataObject.channel + "'. Discard.");
+    }
+  } else {
+    console.log("Received HOST-less request. Discard.");
+  }
+ 
 }).listen(8001, "127.0.0.1");

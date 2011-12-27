@@ -54,7 +54,7 @@
     
     socket.on('connect', function() {
       label("status").html("Connected.");
-      socket.emit("set channel", window.location.hash);
+      socket.emit("set channel", window.location.hash.slice(1));
     });
 
     socket.on('disconnect', function() {
@@ -62,6 +62,7 @@
     });
 
     socket.on('request', function(data) {
+      console.log(data);
       $("#request-tmpl").tmpl(data).prependTo("#requests");
     });
   });
