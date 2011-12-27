@@ -3,6 +3,12 @@
   <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
   <script src="http://localhost:8080/socket.io/socket.io.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+  <script type="text/x-jquery-tmpl" id="request-tmpl">
+    <li>
+      <b>${RequestType}</b>: ${Path}
+    </li>
+  </script>
 </head>
 <body>
 
@@ -14,7 +20,9 @@
       </div>
       <div class="row">
         <div class="span10">
-          <h2>Main content</h2>
+          <h2>Requests received.</h2>
+          <ul id="requests">
+          </ul>
         </div>
         <div class="span4">
           <h3>Status (<span data-label="channelname">...</span>)</h3>
@@ -43,12 +51,18 @@
 
 
   	var socket = io.connect('http://localhost:8080/');
+    
     socket.on('connect', function() {
       label("status").html("Connected.");
       socket.emit("set channel", window.location.hash);
     });
+
     socket.on('disconnect', function() {
       label("status").html("Disconnected.");
+    });
+
+    socket.on('request', function(data) {
+      $("#request-tmpl").tmpl(data).prependTo("#requests");
     });
   });
   </script>
