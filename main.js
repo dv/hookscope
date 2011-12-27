@@ -5,6 +5,8 @@ io.sockets.on('connection', function(socket) {
 	socket.vars = {};
 	socket.vars["chnl"] = "MIIIAAAWWOWOO"
 	socket.on('set channel', function(channel) {
+		socket.emit("request", { RequestType: "GET", Path: "home and away."})
+		socket.emit("request", { RequestType: "POST", Path: "WHATEVER."})
 		socket.set('channel', channel, function () {
 			console.log("Creating channel " + channel);
 			cons["channel" + channel] = this;	
