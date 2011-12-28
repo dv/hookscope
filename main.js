@@ -1,5 +1,10 @@
-var io = require('socket.io').listen(8080);
-var cons = {};
+var io       = require('socket.io').listen(8080);
+var paperboy = require('paperboy');
+var http     = require('http');
+var url      = require('url');
+var redis    = require('redis');
+var config   = require('./config.js').config;
+var cons     = {};
 
 io.sockets.on('connection', function(socket) {
 	socket.vars = {};
@@ -20,15 +25,15 @@ io.sockets.on('connection', function(socket) {
 	});
 });
 
-var http = require('http');
-var url = require('url');
 
-http.createServer(function (req, res) {
+function parseRequest(req, res) {
+  requestUrl = url.parse(req.url, true);
+
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.end('ok\n');
 
   dataObject = {};
-  dataObject.url = url.parse(req.url, true);
+  dataObject.url = requestUrl;
   dataObject.headers = req.headers;
   dataObject.httpVersion = req.httpVersion;
   dataObject.method = req.method;
@@ -45,5 +50,14 @@ http.createServer(function (req, res) {
   } else {
     console.log("Received HOST-less request. Discard.");
   }
- 
+}
+
+http.createServer(function (req, res) {
+
+  if (req.headers["host"].split(":")[0] == config.domain) {
+    paperboy.deliver(config.webroot, req, res);
+  } else {
+    parseRequest(req, res);
+  }
+
 }).listen(8001, "127.0.0.1");
