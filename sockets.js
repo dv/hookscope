@@ -32,6 +32,16 @@ function Sockets(listener) {
     emit_event(channel, "history", data);
   }
 
+  /*
+   * Notify the clients of the possible URL endpoints. Data
+   * is an array containing the differint URLs, e.g.
+   *    ["http://localhost/hooks/aXejf/", "http://aXejf.localhost/"]
+   */
+  this.setUrls = function setUrls(channel, data) {
+    active_sockets["channel-" + channel].emit("urls", data);
+    emit_event(channel, "urls", data);
+  }
+
   // Event handling
   io.sockets.on('connection', function(socket) {
     socket.on('set channel', function(channel) {

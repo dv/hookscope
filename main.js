@@ -13,11 +13,13 @@ function parseRequest(req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.end('ok\n');
 
-  dataObject = {};
-  dataObject.url = requestUrl;
-  dataObject.headers = req.headers;
-  dataObject.httpVersion = req.httpVersion;
-  dataObject.method = req.method;
+  dataObject = {
+    datetime: new Date(),
+    url: requestUrl,
+    headers: req.headers,
+    httpVersion: req.httpVersion,
+    method: req.method
+  };
 
   if (config.hookdir && req.url.split("/")[1] === config.hookdir) {
     dataObject.channel = req.url.split("/")[2];
