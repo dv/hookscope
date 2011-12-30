@@ -27,7 +27,7 @@ function Sockets(listener) {
     emit_event(channel, "publish", data);
   }
 
-  this.history = function pushHistory(channel, data) {
+  this.history = function history(channel, data) {
     active_sockets["channel-" + channel].emit("history", data);
     emit_event(channel, "history", data);
   }

@@ -21,12 +21,15 @@ exports.config = {
   // Redis connection
   redisHost: "viperfish.redistogo.com",
   redisPort: "9991",
-  redisAuth: "xxxxxxxxxxxx",
+  redisAuth: "",
 
   // Redis expiry of unused channels
   expire: 60*60*24*7,
 
   // Maximum requests per channel
-  maxlen: 20
+  maxlen: 20,
+
+  // Ignore favicon.ico requests?
+  ignoreFavicon: true
 
 }

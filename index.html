@@ -62,7 +62,10 @@
     });
 
     socket.on('history', function(data) {
-      console.log(data);
+      for (var i = 0; i < data.length; i++) {
+        console.log(data[i]);
+        $("#request-tmpl").tmpl(data[i]).appendTo("#requests");
+      }
     });
 
     socket.on('request', function(data) {

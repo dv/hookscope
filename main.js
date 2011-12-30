@@ -40,6 +40,10 @@ function parseRequest(req, res) {
 
 var server = http.createServer(function (req, res) {
 
+  if (config.ignoreFavicon && req.url.split("?")[0].substr(-11, 12) == "favicon.ico") {
+    return false;
+  }
+
   if (req.url.split("/")[1] === config.hookdir) {
       parseRequest(req, res);
   } else if (req.headers["host"].split(":")[0] == config.domain) {
