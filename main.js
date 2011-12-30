@@ -26,7 +26,7 @@ function parseRequest(req, res) {
     dataObject.channel = req.headers["host"].split(".")[0]; 
       
   } else {
-    console.log("Received channelless request. Discard.");
+    console.log("Received channeless request. Discard.");
     return;
   }
 
@@ -70,8 +70,11 @@ if (config.persist) {
 
   sockets.on("set channel", function(channel) {
     persistence.getRequests(channel, function(error, data) {
-      console.log(data);
       sockets.history(channel, data);
     });
+  });
+
+  sockets.on("clear", function(channel) {
+    persistence.clear(channel);
   });
 }

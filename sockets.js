@@ -42,6 +42,12 @@ function Sockets(listener) {
     socket.on('disconnect', function() {
       disconnect_socket(socket);
     });
+
+    socket.on('clear', function() {
+      socket.get("channel", function(err, channel) {
+        emit_event(channel, "clear");
+      });
+    });
   });
 
   // Private Members

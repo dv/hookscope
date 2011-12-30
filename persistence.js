@@ -68,6 +68,10 @@ function Persistence(client) {
     });
   }
 
+  self.clear = function clear(channel, callback) {
+    self.client.del("list:" + channel, callback);
+  }
+
 
   /* 
    * Use this method every time you want to update

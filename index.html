@@ -27,6 +27,7 @@
         <div class="span4">
           <h3>Status (<span data-label="channelname">...</span>)</h3>
           <span data-label="status">Connecting...</span>
+          <a id="clear" href="#">clear</a>
         </div>
       </div>
     </div>
@@ -71,6 +72,11 @@
     socket.on('request', function(data) {
       console.log(data);
       $("#request-tmpl").tmpl(data).prependTo("#requests");
+    });
+
+    $("#clear").click(function() {
+      socket.emit("clear");
+      return false;
     });
   });
   </script>
