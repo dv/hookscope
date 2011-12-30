@@ -1,7 +1,7 @@
 <html>
 <head>
   <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
-  <script src="http://localhost:8080/socket.io/socket.io.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
   <script type="text/x-jquery-tmpl" id="request-tmpl">
@@ -50,7 +50,7 @@
     label("channelname").html(window.location.hash);
 
 
-  	var socket = io.connect('http://localhost:8080/');
+  	var socket = io.connect();
     
     socket.on('connect', function() {
       label("status").html("Connected.");
@@ -59,6 +59,10 @@
 
     socket.on('disconnect', function() {
       label("status").html("Disconnected.");
+    });
+
+    socket.on('history', function(data) {
+      console.log(data);
     });
 
     socket.on('request', function(data) {

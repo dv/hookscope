@@ -1,33 +1,14 @@
-var io       = require('socket.io').listen(8080);
 var paperboy = require('paperboy');
 var http     = require('http');
 var url      = require('url');
 var redis    = require('redis');
 var config   = require('./config.js').config;
-var cons     = {};
+var sockets;
 
-io.sockets.on('connection', function(socket) {
-	socket.vars = {};
-	socket.vars["chnl"] = "MIIIAAAWWOWOO"
-	socket.on('set channel', function(channel) {
-		socket.set('channel', channel, function () {
-			console.log("Creating channel " + channel);
-			cons["channel" + channel] = socket;	
-		});
-	});
-
-	socket.on('disconnect', function () {
-		console.log("Disconnected " + socket.vars["chnl"]);
-		socket.get('channel', function (err,channel) {
-			console.log("Removing channel " + channel);
-			delete cons["channel" + channel];
-		});
-	});
-});
 
 
 function parseRequest(req, res) {
-  requestUrl = url.parse(req.url, true);
+  var requestUrl = url.parse(req.url, true);
 
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.end('ok\n');
@@ -38,26 +19,55 @@ function parseRequest(req, res) {
   dataObject.httpVersion = req.httpVersion;
   dataObject.method = req.method;
 
-  if (req.headers["host"]) {
-    dataObject.channel = req.headers["host"].split(".")[0];   
-    
-    if (cons["channel" + dataObject.channel]) {
-      console.log("Received request for channel '" + dataObject.channel + "'. Emit.");
-      cons["channel" + dataObject.channel].emit("request", dataObject);
-    } else {
-      console.log("Recieved request for unknown channel '" + dataObject.channel + "'. Discard.");
-    }
+  if (config.hookdir && req.url.split("/")[1] === config.hookdir) {
+    dataObject.channel = req.url.split("/")[2];
+
+  } else if (req.headers["host"]) {
+    dataObject.channel = req.headers["host"].split(".")[0]; 
+      
   } else {
-    console.log("Received HOST-less request. Discard.");
+    console.log("Received channelless request. Discard.");
+    return;
+  }
+
+  if (sockets.exists(dataObject.channel)) {
+    console.log("Received request for channel '" + dataObject.channel + "'. Emit.");
+    sockets.publish(dataObject.channel, dataObject);
+  } else {
+    console.log("Received request for unknown channel '" + dataObject.channel + "'. Discard.");
   }
 }
 
-http.createServer(function (req, res) {
+var server = http.createServer(function (req, res) {
 
-  if (req.headers["host"].split(":")[0] == config.domain) {
-    paperboy.deliver(config.webroot, req, res);
+  if (req.url.split("/")[1] === config.hookdir) {
+      parseRequest(req, res);
+  } else if (req.headers["host"].split(":")[0] == config.domain) {
+      paperboy.deliver(config.webroot, req, res);
   } else {
-    parseRequest(req, res);
+      parseRequest(req, res);
   }
 
-}).listen(8001, "127.0.0.1");
+}).listen(config.port, config.host);
+
+sockets = require('./sockets.js').createSockets(server);
+
+
+if (config.persist) {
+  var persistence = require('./persistence.js').createClient(config.redisPort, config.redisHost, config.redisAuth);
+
+  sockets.on("touch", function(channel) {
+    persistence.touch(channel);
+  });
+
+  sockets.on("publish", function(channel, data) {
+    persistence.pushRequest(channel, data);
+  });
+
+  sockets.on("set channel", function(channel) {
+    persistence.getRequests(channel, function(error, data) {
+      console.log(data);
+      sockets.history(channel, data);
+    });
+  });
+}

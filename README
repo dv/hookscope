@@ -5,3 +5,10 @@ Start main.js using node.js:
  $ node-dev main.js
  
 Open main.html in a browser.
+
+
+Bugs/Todo
+=========
+
+* Does not support multiple pages accessing the same channel.
+* Does not support multiple node instances.
