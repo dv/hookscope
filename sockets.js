@@ -15,7 +15,15 @@ function Sockets(listener) {
   events.EventEmitter.call(this);
 
   var self = this;
-  var io = require('socket.io').listen(listener);
+  var io = require('socket.io');
+
+  
+  io.configure(function () { 
+    io.set("transports", ["xhr-polling"]); 
+    io.set("polling duration", 10); 
+  });
+
+  io = io.listen(listener);
   var active_sockets = {};
 
   this.exists = function exists(channel) {
