@@ -4,6 +4,7 @@
   "dependencies": {
     "redis": "0.7.1",
     "hiredis": "0.1.13",
-    "paperboy": "0.0.3"
+    "paperboy": "0.0.3",
+    "socket.io": "0.8"
   }
 }
