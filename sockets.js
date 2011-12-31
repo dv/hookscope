@@ -15,18 +15,12 @@ function Sockets(listener) {
   events.EventEmitter.call(this);
 
   var self = this;
-  var io = require('socket.io');
-
-
-  io.configure(function () { 
-    io.set("transports", ["xhr-polling"]); 
-    io.set("polling duration", 10);
-    io.disable("flash policy server");
-    io.enable('browser client etag');
-    io.set('log level', 1);
+  var io = require('socket.io').listen(listener, {
+    "flash policy server": false,
+    "transports": ['xhr-polling'],
+    'polling duration': 10
   });
 
-  io = io.listen(listener);
   var active_sockets = {};
 
   this.exists = function exists(channel) {
