@@ -13,7 +13,7 @@ exports.config = {
 
   // HTTP server details
   host: "127.0.0.1",
-  port: 8000,
+  port: process.env.PORT || 8000,
 
   // Persist requests y/n (if true, configure redis below)
   persist: true, 
@@ -21,7 +21,7 @@ exports.config = {
   // Redis connection
   redisHost: "viperfish.redistogo.com",
   redisPort: "9991",
-  redisAuth: "",
+  redisAuth: "89dde81eafc9835bf0ff47ec973c48d5",
 
   // Redis expiry of unused channels
   expire: 60*60*24*7,
