@@ -17,10 +17,13 @@ function Sockets(listener) {
   var self = this;
   var io = require('socket.io');
 
-  
+
   io.configure(function () { 
     io.set("transports", ["xhr-polling"]); 
-    io.set("polling duration", 10); 
+    io.set("polling duration", 10);
+    io.disable("flash policy server");
+    io.enable('browser client etag');
+    io.set('log level', 1);
   });
 
   io = io.listen(listener);
