@@ -15,6 +15,8 @@ function Sockets(listener) {
   events.EventEmitter.call(this);
 
   var self = this;
+  console.log(listener);
+  console.log(typeof listener);
   var io = require('socket.io').listen(listener, {
     "flash policy server": false,
     "transports": ['xhr-polling'],
