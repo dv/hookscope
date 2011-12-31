@@ -16,7 +16,7 @@ exports.config = {
   port: process.env.PORT || 8000,
 
   // Persist requests y/n (if true, configure redis below)
-  persist: true, 
+  persist: false, 
 
   // Redis connection
   redisHost: "viperfish.redistogo.com",
