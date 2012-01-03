@@ -54,7 +54,8 @@ var server = http.createServer(function (req, res) {
       parseRequest(req, res);
   }
 
-}).listen(config.port, config.host);
+});
+server.listen(config.port);
 
 sockets = require('./sockets.js').createSockets(server);
 
