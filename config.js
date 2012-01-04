@@ -1,8 +1,13 @@
 var path = require('path');
+var url = require('url');
+var redisConfig = url.parse(process.env.REDISTOGO_URL || "");
 
 exports.config = {
   // The directory from which to serve the static files
   webroot: path.join(path.dirname(__filename), ''),
+
+  // If hostname is in the form of channel.domain.tld
+  subDomainChannel: true,
 
   // The domain used to host this app
   domain: "localhost",
@@ -19,9 +24,9 @@ exports.config = {
   persist: true, 
 
   // Redis connection
-  redisHost: "viperfish.redistogo.com",
-  redisPort: "9991",
-  redisAuth: "",
+  redisHost: redisConfig.hostname || "localhost",
+  redisPort: redisConfig.port || "6379",
+  redisAuth: (redisConfig.auth || "").split(":")[1] || "auth string here",
 
   // Redis expiry of unused channels
   expire: 60*60*24*7,
