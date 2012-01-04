@@ -21,7 +21,7 @@ exports.config = {
   port: process.env.PORT || 8000,
 
   // Persist requests y/n (if true, configure redis below)
-  persist: redisConfig.length || false, 
+  persist: redisConfig.hostname.length || false, 
 
   // Redis connection
   redisHost: redisConfig.hostname || "localhost",
