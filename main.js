@@ -6,9 +6,9 @@ var config   = require('./config.js').config;
 var sockets;
 
 function staticRequest(req) {
-  return !(req.url.split("/")[1] === config.hookdir) 
-          && (config.subDomainChannel
-          && req.headers["host"].split(":")[0] == config.domain);
+  return !((req.url.split("/")[1] === config.hookdir) 
+          || (config.subDomainChannel
+          && req.headers["host"].split(":")[0] == config.domain));
 }
 
 function extractChannel(req) {
