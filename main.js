@@ -5,6 +5,23 @@ var redis    = require('redis');
 var config   = require('./config.js').config;
 var sockets;
 
+function staticRequest(req) {
+  return !(req.url.split("/")[1] === config.hookdir) 
+          && (config.subDomainChannel
+          && req.headers["host"].split(":")[0] == config.domain);
+}
+
+function extractChannel(req) {
+  if (config.hookdir && req.url.split("/")[1] === config.hookdir) {
+    return req.url.split("/")[2];
+
+  } else if (config.subDomainChannel && req.headers["host"]) {
+    return req.headers["host"].split(".")[0]; 
+  } else {
+    return false;
+  }
+}
+
 
 
 function parseRequest(req, res) {
@@ -21,14 +38,10 @@ function parseRequest(req, res) {
     method: req.method
   };
 
-  if (config.hookdir && req.url.split("/")[1] === config.hookdir) {
-    dataObject.channel = req.url.split("/")[2];
+  dataObject.channel = extractChannel(req);
 
-  } else if (req.headers["host"]) {
-    dataObject.channel = req.headers["host"].split(".")[0]; 
-      
-  } else {
-    console.log("Received channeless request. Discard.");
+  if (!dataObject.channel) {
+    console.log("Received chaneless request. Discard.");
     return;
   }
 
@@ -46,14 +59,11 @@ var server = http.createServer(function (req, res) {
     return false;
   }
 
-  if (req.url.split("/")[1] === config.hookdir) {
-      parseRequest(req, res);
-  } else if (req.headers["host"].split(":")[0] == config.domain) {
-      paperboy.deliver(config.webroot, req, res);
+  if (staticRequest(req)) {
+    paperboy.deliver(config.webroot, req, res);
   } else {
-      parseRequest(req, res);
+    parseRequest(req, res);
   }
-
 });
 server.listen(config.port);
 
