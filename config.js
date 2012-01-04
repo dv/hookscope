@@ -7,7 +7,7 @@ exports.config = {
   webroot: path.join(path.dirname(__filename), ''),
 
   // If hostname is in the form of channel.domain.tld
-  subDomainChannel: true,
+  subDomainChannel: false,
 
   // The domain used to host this app
   domain: "localhost",
