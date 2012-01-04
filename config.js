@@ -18,7 +18,7 @@ exports.config = {
 
   // HTTP server details
   host: "127.0.0.1",
-  port: 8000,
+  port: process.env.PORT || 8000,
 
   // Persist requests y/n (if true, configure redis below)
   persist: true, 
