@@ -7,6 +7,14 @@ Start main.js using node.js:
 Open main.html in a browser.
 
 
+Test
+====
+
+Install should and mocha:
+ $ npm install mocha coffee-script should
+ $ make test
+
+
 Bugs/Todo
 =========
 
