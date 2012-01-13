@@ -1,4 +1,4 @@
-exports.createSockets = createSockets;
+exports.createClients = createClients;
 
 var events = require('events');
 
@@ -7,11 +7,11 @@ var events = require('events');
  * Pass either an Express app or a
  * simple port number as listener.
  */
-function createSockets(listener) {
-  return new Sockets(listener);
+function createClients(listener) {
+  return new Clients(listener);
 }
 
-function Sockets(listener) {
+function Clients(listener) {
   events.EventEmitter.call(this);
 
   var self = this;
@@ -90,10 +90,10 @@ function Sockets(listener) {
   }
 }
 
-Sockets.super_ = events.EventEmitter;
-Sockets.prototype = Object.create(events.EventEmitter.prototype, {
+Clients.super_ = events.EventEmitter;
+Clients.prototype = Object.create(events.EventEmitter.prototype, {
   constructor: {
-    value: Sockets,
+    value: Clients,
     enumerable: false
   }
 });

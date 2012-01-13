@@ -67,7 +67,7 @@ var server = http.createServer(function (req, res) {
 });
 server.listen(config.port);
 
-sockets = require('./sockets.js').createSockets(server);
+sockets = require('./clients.js').createClients(server);
 
 
 if (config.persist) {
