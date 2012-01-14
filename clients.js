@@ -20,7 +20,7 @@ function Clients(listener, options) {
   var io = require('socket.io').listen(listener);
 
   io.configure(function() {
-    _.each(options, function(key, value) {
+    _.each(options, function(value, key) {
       io.set(key, value);
     });
   })
