@@ -19,12 +19,11 @@ function Clients(listener, options) {
   var active_sockets = {};
   var io = require('socket.io').listen(listener);
 
-  _.each(options, function(key, value) {
-    io.set(key, value);
-  });
-
-    io.set("transports", ["xhr-polling"]); 
-    io.set("polling duration", 10); 
+  io.configure(function() {
+    _.each(options, function(key, value) {
+      io.set(key, value);
+    });
+  })
 
   this.exists = function exists(channel) {
     return active_sockets["channel-" + channel] && true;
