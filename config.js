@@ -35,6 +35,13 @@ exports.config = {
   maxlen: 20,
 
   // Ignore favicon.ico requests?
-  ignoreFavicon: true
+  ignoreFavicon: true,
+
+  // Custom socket.io options
+  // This is useful to circumvent server restrictions
+  // like on Heroku:
+  socketOpts: {
+    "transports": ["xhr-polling"],
+    "polling duration": 10 }
 
 }

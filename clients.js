@@ -1,22 +1,30 @@
 exports.createClients = createClients;
 
 var events = require('events');
+var _ = require('underscore')._;
 
 /*
  * Initializes the socket.io code.
  * Pass either an Express app or a
  * simple port number as listener.
  */
-function createClients(listener) {
-  return new Clients(listener);
+function createClients(listener, options) {
+  return new Clients(listener, options);
 }
 
-function Clients(listener) {
+function Clients(listener, options) {
   events.EventEmitter.call(this);
 
   var self = this;
-  var io = require('socket.io').listen(listener);
   var active_sockets = {};
+  var io = require('socket.io').listen(listener);
+
+  _.each(options, function(key, value) {
+    io.set(key, value);
+  });
+
+    io.set("transports", ["xhr-polling"]); 
+    io.set("polling duration", 10); 
 
   this.exists = function exists(channel) {
     return active_sockets["channel-" + channel] && true;

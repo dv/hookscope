@@ -67,7 +67,9 @@ var server = http.createServer(function (req, res) {
 });
 server.listen(config.port);
 
-sockets = require('./clients.js').createClients(server);
+console.log("Server started on port " + config.port);
+
+sockets = require('./clients.js').createClients(server, config.socketOpts);
 
 
 if (config.persist) {
