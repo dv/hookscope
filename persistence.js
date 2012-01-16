@@ -15,6 +15,8 @@ exports.createClient = function createClient(port, host, auth) {
 *  - pushRequest(channel, data, callback)
 *      Adds a new request (data) to an already or not existing
 *      channel.
+*  - getRequests(channel, callback)
+*      Returns the saved requests for this channel.
 *  - channelExists(channel, callback)
 *      Checks if the channel already exists
 *      callback is called with one parameter (exists or not)
@@ -86,7 +88,7 @@ function Persistence(client) {
 /*
  * Redis Keys
  * ==========
- * channels:     set of all the channels
+ * channels      set of all the channels
  * 
  * channel:NAME  channel to subscribe to
  * list:NAME     list of messages (trimmed to config.maxlen)
