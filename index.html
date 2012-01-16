@@ -3,8 +3,8 @@
   <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
   <script src="/socket.io/socket.io.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
   <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.2.2/underscore-min.js"></script>
   <script type="text/x-jquery-tmpl" id="request-tmpl">
     <li>
       <table>
@@ -35,6 +35,8 @@
         <div class="span4">
           <h3>Status (<span data-label="channelname">...</span>)</h3>
           <span data-label="status">Connecting...</span>
+          <h4>URL:</h4>
+          <span data-label="url"></span>
           <a id="clear" href="#">clear</a>
         </div>
       </div>
@@ -80,6 +82,19 @@
     socket.on('request', function(data) {
       console.log(data);
       $("#request-tmpl").tmpl(data).hide().prependTo("#requests").animate({ opacity: 'toggle', height: 'toggle' }, "slow");
+    });
+
+    socket.on('setUrls', function(urls) {
+      formatted = [];
+      _.each(urls, function(url) {
+          if (url[0] == "/") {
+            formatted.push("http://" + window.location.host + url);
+          } else {
+            formatted.push("http://" + url + "/");
+          }
+      });
+
+      label("url").html(formatted.join(" or "));
     });
 
     $("#clear").click(function() {

@@ -41,7 +41,7 @@ function parseRequest(req, res) {
   dataObject.channel = extractChannel(req);
 
   if (!dataObject.channel) {
-    console.log("Received chaneless request. Discard.");
+    console.log("Received channelless request. Discard.");
     return;
   }
 
@@ -70,6 +70,21 @@ server.listen(config.port);
 console.log("Server started on port " + config.port);
 
 sockets = require('./clients.js').createClients(server, config.socketOpts);
+
+// Let the client know the webhook-URL.
+sockets.on("set channel", function(channel) {
+  urls = [];
+
+  if (config.hookdir) {
+    urls.push("/" + config.hookdir + "/" + channel);
+  }
+
+  if (config.subDomainChannel) {
+    urls.push(channel + "." + config.domain); 
+  }
+
+  sockets.setUrls(channel, urls);
+});
 
 
 if (config.persist) {

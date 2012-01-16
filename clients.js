@@ -31,12 +31,12 @@ function Clients(listener, options) {
 
   this.publish = function publish(channel, data) {
     active_sockets["channel-" + channel].emit("request", data);
-    emit_event(channel, "publish", data);
+    emitEvent(channel, "publish", data);
   }
 
   this.history = function history(channel, data) {
     active_sockets["channel-" + channel].emit("history", data);
-    emit_event(channel, "history", data);
+    emitEvent(channel, "history", data);
   }
 
   /*
@@ -45,31 +45,31 @@ function Clients(listener, options) {
    *    ["http://localhost/hooks/aXejf/", "http://aXejf.localhost/"]
    */
   this.setUrls = function setUrls(channel, data) {
-    active_sockets["channel-" + channel].emit("urls", data);
-    emit_event(channel, "urls", data);
+    active_sockets["channel-" + channel].emit("setUrls", data);
+    emitEvent(channel, "setUrls", data);
   }
 
   // Event handling
   io.sockets.on('connection', function(socket) {
     socket.on('set channel', function(channel) {
-      connect_socket(socket, channel);
-      emit_event(channel, 'set channel');
+      connectSocket(socket, channel);
+      emitEvent(channel, 'set channel');
     });
 
     socket.on('disconnect', function() {
-      disconnect_socket(socket);
+      disconnectSocket(socket);
     });
 
     socket.on('clear', function() {
       socket.get("channel", function(err, channel) {
-        emit_event(channel, "clear");
+        emitEvent(channel, "clear");
       });
     });
   });
 
   // Private Members
-  function connect_socket(socket, channel) {
-    emit_event(channel, "connection");
+  function connectSocket(socket, channel) {
+    emitEvent(channel, "connection");
 
     console.log("Connect to channel " + channel + ".");
     socket.set("channel", channel, function() {
@@ -77,13 +77,13 @@ function Clients(listener, options) {
     });
   }
 
-  function disconnect_socket(socket) {
+  function disconnectSocket(socket) {
     socket.get("channel", function(err, channel) {
       if (err) {
         console.log("Error while removing channel: " + err);
 
       } else {
-        emit_event(channel, "disconnect");
+        emitEvent(channel, "disconnect");
         console.log("Disconnect channel " + channel + ".");
         delete active_sockets["channel-" + channel];
 
@@ -91,7 +91,7 @@ function Clients(listener, options) {
     });
   }
 
-  function emit_event(channel, event, data) {
+  function emitEvent(channel, event, data) {
     self.emit("touch", channel, data);
     self.emit(event, channel, data);
   }
