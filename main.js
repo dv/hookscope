@@ -1,30 +1,37 @@
-var paperboy = require('paperboy');
+var _        = require('underscore')._;
+var express  = require('express');
 var http     = require('http');
 var url      = require('url');
 var redis    = require('redis');
 var config   = require('./config.js').config;
+var app      = express.createServer();
 var sockets;
 
-function staticRequest(req) {
-  return !((req.url.split("/")[1] === config.hookdir) 
-          || (config.subDomainChannel
-          && req.headers["host"].split(":")[0] == config.domain));
-}
+app.use(app.router);
+app.use(express.static(config.webRoot));      // Serve static on route fall through
 
-function extractChannel(req) {
-  if (config.hookdir && req.url.split("/")[1] === config.hookdir) {
-    return req.url.split("/")[2];
-
-  } else if (config.subDomainChannel && req.headers["host"]) {
-    return req.headers["host"].split(".")[0]; 
-  } else {
+// Ignore favicons
+if (config.ignoreFavicon) {
+  app.get('*/favicon.ico', function(req, res) {
     return false;
-  }
+  });
 }
 
+// Translate subdomain channel into hookdir
+if (config.subDomainChannel) {
+  app.all('*', function(req, res, next) {
+    var subDomain = req.headers.host.slice(0, -config.domain.length).split('.')[0];
 
+    if (subDomain && !_.include(config.staticSubDomains, subDomain)) {
+      req.url = '/' + config.hookDir + '/' + subDomain + req.url;
+    }
 
-function parseRequest(req, res) {
+    next(); 
+  });
+}
+
+// Parse the webhook requests
+app.all('/' + config.hookDir + '/:hookscopechannel/:subpath?', function(req, res) {
   var requestUrl = url.parse(req.url, true);
 
   res.writeHead(200, {'Content-Type': 'text/plain'});
@@ -38,7 +45,7 @@ function parseRequest(req, res) {
     method: req.method
   };
 
-  dataObject.channel = extractChannel(req);
+  dataObject.channel = req.params.hookscopechannel;
 
   if (!dataObject.channel) {
     console.log("Received channelless request. Discard.");
@@ -51,32 +58,21 @@ function parseRequest(req, res) {
   } else {
     console.log("Received request for unknown channel '" + dataObject.channel + "'. Discard.");
   }
-}
 
-var server = http.createServer(function (req, res) {
-
-  if (config.ignoreFavicon && req.url.split("?")[0].substr(-11, 12) == "favicon.ico") {
-    return false;
-  }
-
-  if (staticRequest(req)) {
-    paperboy.deliver(config.webroot, req, res);
-  } else {
-    parseRequest(req, res);
-  }
 });
-server.listen(config.port);
+
+app.listen(config.port);
 
 console.log("Server started on port " + config.port);
 
-sockets = require('./clients.js').createClients(server, config.socketOpts);
+sockets = require('./clients.js').createClients(app, config.socketOpts);
 
 // Let the client know the webhook-URL.
 sockets.on("set channel", function(channel) {
   urls = [];
 
-  if (config.hookdir) {
-    urls.push("/" + config.hookdir + "/" + channel);
+  if (config.hookDir) {
+    urls.push("/" + config.hookDir + "/" + channel);
   }
 
   if (config.subDomainChannel) {

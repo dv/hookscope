@@ -3,18 +3,17 @@ var url = require('url');
 var redisConfig = url.parse(process.env.REDISTOGO_URL || "");
 
 exports.config = {
-  // The directory from which to serve the static files
-  webroot: path.join(path.dirname(__filename), ''),
-
   // If hostname is in the form of channel.domain.tld
   subDomainChannel: false,
 
-  // The domain used to host this app
-  domain: "localhost",
+  // Subdomains (or rather, channels) to pass to static serving
+  staticSubDomains: ["www", "localhost"],
 
-  // The subdirectory to listen for webhooks on. If you don't
-  // want to enable this, put false.
-  hookdir: "hook",
+  // The domain used to host this app
+  domain: "localhost:8000",
+
+  // The subdirectory to listen for webhooks on.
+  hookDir: "hook",
 
   // HTTP server details
   host: "127.0.0.1",
@@ -42,6 +41,10 @@ exports.config = {
   // like on Heroku:
   socketOpts: {
     "transports": ["xhr-polling"],
-    "polling duration": 10 }
+    "polling duration": 10 },
+  
+  // The directory from which to serve the static files
+  webRoot: path.join(path.dirname(__filename), '')
+
 
 }
