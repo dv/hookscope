@@ -47,7 +47,7 @@ function parseRequest(req, res) {
 
   if (sockets.exists(dataObject.channel)) {
     console.log("Received request for channel '" + dataObject.channel + "'. Emit.");
-    sockets.publish(dataObject.channel, dataObject);
+    sockets.request(dataObject.channel, dataObject);
   } else {
     console.log("Received request for unknown channel '" + dataObject.channel + "'. Discard.");
   }

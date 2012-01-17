@@ -26,16 +26,14 @@ function Clients(listener, options) {
   })
 
   this.exists = function exists(channel) {
-    return active_sockets["channel-" + channel] && true;
+    return !!active_sockets["channel-" + channel];
   }
 
-  this.publish = function publish(channel, data) {
-    active_sockets["channel-" + channel].emit("request", data);
-    emitEvent(channel, "publish", data);
+  this.request = function request(channel, data) {
+    emitEvent(channel, "request", data);
   }
 
   this.history = function history(channel, data) {
-    active_sockets["channel-" + channel].emit("history", data);
     emitEvent(channel, "history", data);
   }
 
@@ -45,7 +43,6 @@ function Clients(listener, options) {
    *    ["http://localhost/hooks/aXejf/", "http://aXejf.localhost/"]
    */
   this.setUrls = function setUrls(channel, data) {
-    active_sockets["channel-" + channel].emit("setUrls", data);
     emitEvent(channel, "setUrls", data);
   }
 
@@ -73,7 +70,13 @@ function Clients(listener, options) {
 
     console.log("Connect to channel " + channel + ".");
     socket.set("channel", channel, function() {
-      active_sockets["channel-" + channel] = socket;
+
+      if (active_sockets["channel-" + channel]) {
+        active_sockets["channel-" + channel].push(socket);
+      } else {
+        active_sockets["channel-" + channel] = [socket];
+      }
+
     });
   }
 
@@ -85,13 +88,24 @@ function Clients(listener, options) {
       } else {
         emitEvent(channel, "disconnect");
         console.log("Disconnect channel " + channel + ".");
-        delete active_sockets["channel-" + channel];
+        active_sockets["channel-" + channel] = _.reject(
+          active_sockets["channel-" + channel], function(sock) {
+            return sock.id == socket.id;
+        });
+
+        if (!active_sockets["channel-" + channel].length) {
+          delete active_sockets["channel-" + channel];
+        }
 
       }
     });
   }
 
   function emitEvent(channel, event, data) {
+    _.each(active_sockets["channel-" + channel], function(socket) {
+      socket.emit(event, data);
+    });
+
     self.emit("touch", channel, data);
     self.emit(event, channel, data);
   }
