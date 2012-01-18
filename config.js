@@ -44,7 +44,7 @@ exports.config = {
     "polling duration": 10 },
   
   // The directory from which to serve the static files
-  webRoot: path.join(path.dirname(__filename), '')
+  webRoot: path.join(path.dirname(__filename), 'static')
 
 
 }
