@@ -31,7 +31,11 @@ if (config.subDomainChannel) {
 }
 
 // Parse the webhook requests
-app.all('/' + config.hookDir + '/:hookscopechannel/:subpath?', function(req, res) {
+app.all('/' + config.hookDir + '/:hookscopechannel', parseWebHook);
+app.all('/' + config.hookDir + '/:hookscopechannel/*', parseWebHook);
+
+
+function parseWebHook(req, res) {
   var requestUrl = url.parse(req.url, true);
 
   res.writeHead(200, {'Content-Type': 'text/plain'});
@@ -58,8 +62,7 @@ app.all('/' + config.hookDir + '/:hookscopechannel/:subpath?', function(req, res
   } else {
     console.log("Received request for unknown channel '" + dataObject.channel + "'. Discard.");
   }
-
-});
+}
 
 app.listen(config.port);
 
