@@ -3,9 +3,18 @@
   <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
   <script src="/socket.io/socket.io.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+  <script src="jquery.customslide.js"></script>
   <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.2.2/underscore-min.js"></script>
-  <script type="text/x-jquery-tmpl" id="request-tmpl">
+  <script src="jquery.easydate-0.2.4.min.js"></script>
+  <script src="hookscope.js"></script>
+      <style type="text/css">
+      body {
+        padding-top: 60px;
+      }
+    </style>
+  <script type="text/x-jquery-tmpl" id="request-tmpl-old">
     <li>
       <table>
         <tr>
@@ -17,111 +26,94 @@
       </table>
     </li>
   </script>
+
+  <script type="text/x-jquery-tmpl" id="request-tmpl">
+  <div class="row">
+    <div class="span4">
+      <h2>${method}</h2>
+      <p>
+        <code class="easydate">${datetime}</code>
+        <code>http/${httpVersion}</code>
+      </p>
+    </div>
+    <div class="span12">
+      <h3>${url.href}</h3>
+      <p>To include a blockquote, wrap <code>&lt;blockquote&gt;</code> around <code>&lt;p&gt;</code> and <code>&lt;small&gt;</code> tags. Use the <code>&lt;small&gt;</code> element to cite your source and youll get an em dash <code>&amp;mdash;</code> before it.</p>
+      <blockquote>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+        <small>Dr. Julius Hibbert</small>
+      </blockquote>
+<pre class="prettyprint linenums">
+&lt;blockquote&gt;
+  &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.&lt;/p&gt;
+  &lt;small&gt;Dr. Julius Hibbert&lt;/small&gt;
+&lt;/blockquote&gt;
+</pre>
+    </div>
+  </div>
+  </script>
+
+
 </head>
 <body>
 
-  <div class="container">
-
-    <div class="content">
-      <div class="page-header">
-        <h1>HookScope <small>Debugging Webhooks</small></h1>
-      </div>
-      <div class="row">
-        <div class="span10">
-          <h2>Requests received.</h2>
-          <ul id="requests">
+    <div class="topbar">
+      <div class="fill">
+        <div class="container">
+          <a class="brand" href="#">Hookscope</a>
+          <ul class="nav">
+            <li><a href="#" data-label="channelname"></a></li>
+            <li class="active"><a href="#">Channel</a></li>
+            <li><a href="https://github.com/dv/hookscope">About</a></li>
+            <li><a href="mailto:david@crowdway.com">Contact</a></li>
           </ul>
-        </div>
-        <div class="span4">
-          <h3>Status (<span data-label="channelname">...</span>)</h3>
-          <span data-label="status">Connecting...</span>
-          <h4>URL:</h4>
-          <span data-label="url"></span>
-          <a id="clear" href="#">clear</a>
+          <ul class="nav secondary-nav">
+            <li><a href="#">Listening to <span data-label="url"></span></a></li> 
+          </ul>
         </div>
       </div>
     </div>
+
+
+
+
+  <div class="container">
+
+      <section id="requests">
+    </section>
+
+  <div class="hero-unit">
+        <h1>Webhook Debugging</h1>
+        <p>Working with webhooks is awesome, but sometimes it's hard to know what data is sent along. Use Hookscope to find out!</p>
+        <p><a class="btn primary large">Learn more &raquo;</a></p>
+      </div>
+
+      <div class="row">
+        <div class="span6">
+          <h2>Localhost</h2>
+          <p>Hookscope is very easy to set up on your own PC. The only thing you need is Node.js. If you want the requestlog to persist when you shut down the page, you can use an optional Redis database, but Hookscope works fine without as well.</p>
+          <p><a class="btn" href="#">View details &raquo;</a></p>
+        </div>
+        <div class="span5">
+          <h2>Heroku</h2>
+           <p>Hookscope has sensible default settings out of the box and runs straight from Github on Heroku. You can just do a pull+push. If you add the Redis-To-Go Heroku Add-on, Hookscope will automatically detect and use it to save and receive requests without having to be opened in a browser.</p>
+          <p><a class="btn" href="#">View details &raquo;</a></p>
+       </div>
+        <div class="span5">
+          <h2>Heading</h2>
+          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+          <p><a class="btn" href="#">View details &raquo;</a></p>
+        </div>
+      </div>
     <footer>
       <p>&copy; David Verhasselt 2011</p>
+      |
+      <span data-label="status">connecting...</span>
     </footer>
 
   </div> <!-- /container -->
 
   <script>
-  function label(value) {
-    return $("[data-label=" + value + "]");
-  }
 
-  $(function() {
-
-    if(!window.location.hash) {
-      window.location.hash = "#" + createRandomWord(6);     
-    }
-    
-    label("channelname").html(window.location.hash);
-
-
-  	var socket = io.connect();
-    
-    socket.on('connect', function() {
-      label("status").html("Connected.");
-      socket.emit("set channel", window.location.hash.slice(1));
-    });
-
-    socket.on('disconnect', function() {
-      label("status").html("Disconnected.");
-    });
-
-    socket.on('history', function(data) {
-      for (var i = 0; i < data.length; i++) {
-        if (console) { console.log(data[i]); }
-        $("#request-tmpl").tmpl(data[i]).appendTo("#requests");
-      }
-    });
-
-    socket.on('request', function(data) {
-      console.log(data);
-      $("#request-tmpl").tmpl(data).hide().prependTo("#requests").animate({ opacity: 'toggle', height: 'toggle' }, "slow");
-    });
-
-    socket.on('setUrls', function(urls) {
-      formatted = [];
-      _.each(urls, function(url) {
-          if (url[0] == "/") {
-            formatted.push("http://" + window.location.host + url);
-          } else {
-            formatted.push("http://" + url + "/");
-          }
-      });
-
-      label("url").html(formatted.join(" or "));
-    });
-
-    $("#clear").click(function() {
-      socket.emit("clear");
-      return false;
-    });
-  });
-
-  // createRandomWord by James Padolsey
-  // http://james.padolsey.com/javascript/random-word-generator/
-  function createRandomWord(length) {
-    var consonants = 'bcdfghjklmnpqrstvwxyz',
-        vowels = 'aeiou',
-        rand = function(limit) {
-            return Math.floor(Math.random()*limit);
-        },
-        i, word='', length = parseInt(length,10),
-        consonants = consonants.split(''),
-        vowels = vowels.split('');
-
-    for (i=0;i<length/2;i++) {
-        var randConsonant = consonants[rand(consonants.length)],
-            randVowel = vowels[rand(vowels.length)];
-        word += randConsonant;
-        word += i*2<length-1 ? randVowel : '';
-    }
-    return word;
-  }
   </script>
 </body>
