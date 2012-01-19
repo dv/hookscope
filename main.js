@@ -90,7 +90,7 @@ if (config.persist) {
     persistence.touch(channel);
   });
 
-  sockets.on("publish", function(channel, data) {
+  sockets.on("request", function(channel, data) {
     persistence.pushRequest(channel, data);
   });
 
