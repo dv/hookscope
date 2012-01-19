@@ -13,16 +13,21 @@
     body {
       padding-top: 60px;
     }
+
+    .request-tag {
+      white-space: nowrap;
+      line-height: 2em;
+    }
   </style>
   <script type="text/template" id="request-template">
   <div class="row">
     <div class="span4">
       <h2><%- method %></h2>
       <p>
-        <code class="easydate"><%- datetime %></code>
-        <code><%- "http/" + httpVersion %></code>
+        <code class="easydate request-tag"><%- datetime %></code>
+        <code class="request-tag"><%- "http/" + httpVersion %></code>
         <% if (headers["content-length"]) { %>
-          <code><%- $$.formatSize(headers["content-length"]) %></code>
+          <code class="request-tag"><%- $$.formatSize(headers["content-length"]) %></code>
         <% } %>
       </p>
     </div>
