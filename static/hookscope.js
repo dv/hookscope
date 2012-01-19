@@ -11,19 +11,6 @@ function createRequestView(request) {
   return $($("#request-template").data("compiled")(request));
 }
 
-_.filterKeys = function(collection, keys) {
-  var results = {};
-
-  _.each(collection, function(value, key) {
-    if (_.include(keys, key)) {
-      results[key] = value;
-    }
-  });
-  
-  return results;
-}
-
-
 // Compile all the templates
 $(function() {
   $("[type='text/template']").each(function(index, element) {

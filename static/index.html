@@ -7,6 +7,7 @@
   <script src="jquery.customslide.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.2.2/underscore-min.js"></script>
   <script src="jquery.easydate-0.2.4.min.js"></script>
+  <script src="dollars.js"></script>
   <script src="hookscope.js"></script>
   <style type="text/css">
     body {
@@ -33,6 +34,7 @@
         </thead>
         <tbody>
           <% _.each(_.filterKeys(headers, ["user-agent", "content-length"]), function(value, key) { %>
+          <% _.each($$.filterKeys(headers, ["user-agent"]), function(value, key) { %>
             <tr>
               <th><%- key %></th>
               <td><%- value %></td>
