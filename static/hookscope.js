@@ -57,9 +57,12 @@
       setLabel("url", formatted[0]);
     });
 
-    $("#clear").click(function() {
+    $("#clear").click(function(e) {
+      e.preventDefault();
+      $("#requests").attr("id", "oldrequests").hide("customSlide", { direction: "up" }, 1000);
+      $("<div/>", { id: "requests" }).prependTo("#requests-list");
+      
       socket.emit("clear");
-      return false;
     });
 
     $("#sample").click(function(e) {

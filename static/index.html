@@ -14,19 +14,6 @@
         padding-top: 60px;
       }
     </style>
-  <script type="text/x-jquery-tmpl" id="request-tmpl-old">
-    <li>
-      <table>
-        <tr>
-          <td>${method} ${url.href}</td>
-        </tr>
-        <tr>
-          <td><em>${datetime}</em></td>
-        </tr>
-      </table>
-    </li>
-  </script>
-
   <script type="text/x-jquery-tmpl" id="request-tmpl">
   <div class="row">
     <div class="span4">
@@ -79,10 +66,10 @@
 
 
   <div class="container">
-
-      <section id="requests">
+    <section id="requests-list">
+      <div id="requests"></div>
     </section>
-
+    
   <div class="hero-unit">
         <h1>Webhook Debugging</h1>
         <p>Working with webhooks is awesome, but sometimes it's hard to know what data is sent along. Use Hookscope to find out and get the details!</p>
