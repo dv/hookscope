@@ -7,6 +7,19 @@
     label(name).filter("a").attr("href", value);
   }
 
+  function createRequestView(request) {
+    return $($("#request-template").data("compiled")(request));
+  }
+
+
+  // Compile all the templates
+  $(function() {
+    $("[type='text/template']").each(function(index, element) {
+      $(element).data("compiled", _.template(element.text));
+    });
+  });
+
+
   $(function() {
 
     if(!window.location.hash) {
@@ -30,7 +43,7 @@
     socket.on('history', function(data) {
       for (var i = 0; i < data.length; i++) {
         if (console) { console.log(data[i]); }
-        $("#request-tmpl").tmpl(data[i]).appendTo("#requests");
+        createRequestView(data[i]).appendTo("#requests");
       }
 
       $(".easydate").easydate();
@@ -38,7 +51,7 @@
 
     socket.on('request', function(data) {
       console.log(data);
-      $("#request-tmpl").tmpl(data).hide().prependTo("#requests").show("customSlide", { direction: "up" }, 1000);
+      createRequestView(data).hide().prependTo("#requests").show("customSlide", { direction: "up" }, 1000);
 
       $(".easydate").easydate();
     });
