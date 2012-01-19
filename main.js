@@ -7,8 +7,11 @@ var config   = require('./config.js').config;
 var app      = express.createServer();
 var sockets;
 
-app.use(app.router);
-app.use(express.static(config.webRoot));      // Serve static on route fall through
+app.configure(function() {
+  app.use(express.bodyParser());
+  app.use(app.router);
+  app.use(express.static(config.webRoot));      // Serve static on route fall through
+});
 
 // Ignore favicons
 if (config.ignoreFavicon) {
@@ -46,7 +49,8 @@ function parseWebHook(req, res) {
     url: requestUrl,
     headers: req.headers,
     httpVersion: req.httpVersion,
-    method: req.method
+    method: req.method,
+    body: req.body
   };
 
   dataObject.channel = req.params.hookscopechannel;
