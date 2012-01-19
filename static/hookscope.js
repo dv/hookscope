@@ -1,5 +1,10 @@
-  function label(value) {
-    return $("[data-label=" + value + "]");
+  function label(name) {
+    return $("[data-label=" + name + "]");
+  }
+
+  function setLabel(name, value) {
+    label(name).html(value);
+    label(name).filter("a").attr("href", value);
   }
 
   $(function() {
@@ -14,12 +19,12 @@
     var socket = io.connect();
     
     socket.on('connect', function() {
-      label("status").html("connected");
+      setLabel("status", "connected");
       socket.emit("set channel", window.location.hash.slice(1));
     });
 
     socket.on('disconnect', function() {
-      label("status").html("disconnected");
+      setLabel("status", "disconnected");
     });
 
     socket.on('history', function(data) {
@@ -48,14 +53,31 @@
           }
       });
 
-      label("url").html(formatted.join(" or "));
+      document.webhookUrl = formatted[0];
+      setLabel("url", formatted[0]);
     });
 
     $("#clear").click(function() {
       socket.emit("clear");
       return false;
     });
+
+    $("#sample").click(function(e) {
+      e.preventDefault();
+      sampleRequest(document.webhookUrl);
+    })
   });
+
+  function sampleRequest(url) {
+    $.ajax({
+      url: url,
+      type: "POST",
+      data: {
+        "sample-request": true,
+        "greeting": "I hope you're having fun playing with Hookscope!",
+      }
+    });
+  }
 
   // createRandomWord by James Padolsey
   // http://james.padolsey.com/javascript/random-word-generator/
