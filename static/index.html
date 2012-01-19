@@ -32,7 +32,7 @@
           </tr>
         </thead>
         <tbody>
-          <% _.each(headers, function(value, key) { %>
+          <% _.each(_.filterKeys(headers, ["user-agent", "content-length"]), function(value, key) { %>
             <tr>
               <th><%- key %></th>
               <td><%- value %></td>
