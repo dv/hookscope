@@ -21,6 +21,9 @@
       <p>
         <code class="easydate"><%- datetime %></code>
         <code><%- "http/" + httpVersion %></code>
+        <% if (headers["content-length"]) { %>
+          <code><%- $$.formatSize(headers["content-length"]) %></code>
+        <% } %>
       </p>
     </div>
     <div class="span12">
@@ -33,7 +36,6 @@
           </tr>
         </thead>
         <tbody>
-          <% _.each(_.filterKeys(headers, ["user-agent", "content-length"]), function(value, key) { %>
           <% _.each($$.filterKeys(headers, ["user-agent"]), function(value, key) { %>
             <tr>
               <th><%- key %></th>
@@ -41,6 +43,7 @@
             </tr>   
           <% }); %>
         </tbody>
+        <tbody class=""
       </table>
     </div>
   </div>
