@@ -37,6 +37,23 @@
     </div>
     <div class="span12">
       <h3><%- url.pathname %><span class="request-query"><%- url.search %></span></h3>
+      <% if (!_.isEmpty(url.query)) { %>
+        <table class="bordered-table">
+          <thead>
+            <tr>
+              <th colspan="2">Querystring</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% _.each(url.query, function(value, key) { %>
+              <tr>
+                <th><%- key %></th>
+                <td><%- value %></td>
+              </tr>   
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
       <% if (!_.isEmpty(body)) { %>
         <table class="bordered-table">
           <thead>
