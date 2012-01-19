@@ -18,6 +18,10 @@
       white-space: nowrap;
       line-height: 2em;
     }
+
+    .request-query {
+      color: #5789FF;
+    }
   </style>
   <script type="text/template" id="request-template">
   <div class="row">
@@ -32,7 +36,7 @@
       </p>
     </div>
     <div class="span12">
-      <h3><%- url.href %></h3>
+      <h3><%- url.pathname %><span class="request-query"><%- url.search %></span></h3>
       <table class="bordered-table">
         <thead>
           <tr>
