@@ -20,6 +20,10 @@
       line-height: 2em;
     }
 
+    .header-key {
+      white-space: nowrap;
+    }
+
     .request-query {
       color: #5789FF;
     }
@@ -64,7 +68,7 @@
         <table class="bordered-table">
           <thead>
             <tr>
-              <th colspan="2">Body</th>
+              <th colspan="2">Request Body</th>
             </tr>
           </thead>
           <tbody>
@@ -80,19 +84,19 @@
       <table class="bordered-table">
         <thead>
           <tr>
-            <th colspan="2">Headers</th>
+            <th colspan="2">Request Headers</th>
           </tr>
         </thead>
         <tbody class="headers-table" style="display: block; overflow: hidden;">
           <% _.each(popularHeaders, function(value, key) { %>
             <tr class="popular-header">
-              <th><%- key %></th>
+              <th class="header-key"><%- key %></th>
               <td style="width: 100%"><%- value %></td>
             </tr>   
           <% }); %>
           <% _.each(extraHeaders, function(value, key) { %>
             <tr class="extra-header">
-              <th><%- key %></th>
+              <th class="header-key"><%- key %></th>
               <td><%- value %></td>
             </tr>   
           <% }); %>
