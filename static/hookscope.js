@@ -101,7 +101,9 @@ $(function() {
   socket.on('history', function(data) {
     for (var i = 0; i < data.length; i++) {
       if (console) { console.log(data[i]); }
-      createRequestView(data[i]).appendTo("#requests");
+      
+      var el = createRequestView(data[i]).appendTo("#requests");
+      calculateSliderHeights(el.find(".headers-table"));
     }
 
     $(".easydate").easydate();
