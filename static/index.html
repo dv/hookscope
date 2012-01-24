@@ -7,7 +7,8 @@
   <script src="jquery.customslide.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.2.2/underscore-min.js"></script>
   <script src="jquery.easydate-0.2.4.min.js"></script>
-  <script src="http://github.com/dv/dollars/raw/master/dollars.js"></script>
+  <!-- <script src="http://github.com/dv/dollars/raw/master/dollars.js"></script> -->
+  <script src="dollars.js"></script>
   <script src="hookscope.js"></script>
   <style type="text/css">
     body {
@@ -22,8 +23,17 @@
     .request-query {
       color: #5789FF;
     }
+
+    table {
+      position: relative;
+    }
   </style>
   <script type="text/template" id="request-template">
+  <%
+    var popularHeaderKeys = ["user-agent"];
+    var popularHeaders = $$.filterKeys(headers, popularHeaderKeys);
+    var extraHeaders = $$.withoutKeys(headers, popularHeaderKeys);
+  %>
   <div class="row">
     <div class="span4">
       <h2><%- method %></h2>
@@ -77,41 +87,26 @@
             <th colspan="2">Headers</th>
           </tr>
         </thead>
-        <tbody>
-          <% _.each($$.filterKeys(headers, ["user-agent"]), function(value, key) { %>
-            <tr>
+        <tbody class="headers-table" style="display: block; overflow: hidden; height: <%= _.size(popularHeaders) * 38 %>px">
+          <% _.each(popularHeaders, function(value, key) { %>
+            <tr class="popular-header">
+              <th><%- key %></th>
+              <td style="width: 100%"><%- value %></td>
+            </tr>   
+          <% }); %>
+          <% _.each(extraHeaders, function(value, key) { %>
+            <tr class="extra-header">
               <th><%- key %></th>
               <td><%- value %></td>
             </tr>   
           <% }); %>
         </tbody>
-        <tbody class=""
+        <tbody class="show-more-headers">
+          <tr>
+            <th colspan="2" class="show-more-headers-label">Show More...</th>
+          </tr>
+        </tbody>
       </table>
-    </div>
-  </div>
-  </script>
-  <script type="text/template" id="request-template-old">
-  <div class="row">
-    <div class="span4">
-      <h2><%- method %></h2>
-      <p>
-        <code class="easydate"><%- datetime %></code>
-        <code><%- "http/" + httpVersion %></code>
-      </p>
-    </div>
-    <div class="span12">
-      <h3><%- url.href %></h3>
-      <p>To include a blockquote, wrap <code>&lt;blockquote&gt;</code> around <code>&lt;p&gt;</code> and <code>&lt;small&gt;</code> tags. Use the <code>&lt;small&gt;</code> element to cite your source and youll get an em dash <code>&amp;mdash;</code> before it.</p>
-      <blockquote>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
-        <small>Dr. Julius Hibbert</small>
-      </blockquote>
-<pre class="prettyprint linenums">
-&lt;blockquote&gt;
-  &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.&lt;/p&gt;
-  &lt;small&gt;Dr. Julius Hibbert&lt;/small&gt;
-&lt;/blockquote&gt;
-</pre>
     </div>
   </div>
   </script>

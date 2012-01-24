@@ -8,8 +8,41 @@ function setLabel(name, value) {
 }
 
 function createRequestView(request) {
-  return $($("#request-template").data("compiled")(request));
+  var el = $($("#request-template").data("compiled")(request));
+  var tbody = el.find(".headers-table");
+  var popularHeaders = tbody.find(".popular-header");
+  var extraHeaders = tbody.find(".extra-header");
+
+  var minHeight = popularHeaders.length * 38;
+  var maxHeight = (popularHeaders.length + extraHeaders.length) * 38;
+
+  el.find(".show-more-headers").click(function() {
+    //el.find(".show-more-headers-label").toggle()
+    //el.find(".more-headers").toggle("customSlide", { direction: "up" }, 1000);
+
+    var curHeight = tbody.height();
+
+    if(curHeight == minHeight){
+      tbody.animate({
+        height: maxHeight
+      }, 500);
+      
+      //$('#read-more a').html('Close');
+      //$('#gradient').fadeOut();
+    } else {
+      tbody.animate({
+        height: minHeight
+      }, "normal");
+      
+      //$('#read-more a').html('Click to Read More');
+      //$('#gradient').fadeIn();
+    }
+    //return false;
+  });
+
+  return el;
 }
+
 
 // Compile all the templates
 $(function() {
