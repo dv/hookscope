@@ -30,7 +30,7 @@
   </style>
   <script type="text/template" id="request-template">
   <%
-    var popularHeaderKeys = ["user-agent"];
+    var popularHeaderKeys = ["user-agent", "content-type"];
     var popularHeaders = $$.filterKeys(headers, popularHeaderKeys);
     var extraHeaders = $$.withoutKeys(headers, popularHeaderKeys);
   %>
