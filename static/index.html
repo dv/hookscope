@@ -7,6 +7,7 @@
   <script src="jquery.customslide.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.2.2/underscore-min.js"></script>
   <script src="jquery.easydate-0.2.4.min.js"></script>
+  <script src="jquery.actual.min.js"></script>
   <script src="http://github.com/dv/dollars/raw/master/dollars.js"></script>
   <script src="hookscope.js"></script>
   <style type="text/css">
@@ -22,10 +23,6 @@
     .request-query {
       color: #5789FF;
     }
-
-    table {
-      position: relative;
-    }
   </style>
   <script type="text/template" id="request-template">
   <%
@@ -33,7 +30,7 @@
     var popularHeaders = $$.filterKeys(headers, popularHeaderKeys);
     var extraHeaders = $$.withoutKeys(headers, popularHeaderKeys);
   %>
-  <div class="row">
+  <div class="row request-row">
     <div class="span4">
       <h2><%- method %></h2>
       <p>
@@ -86,7 +83,7 @@
             <th colspan="2">Headers</th>
           </tr>
         </thead>
-        <tbody class="headers-table" style="display: block; overflow: hidden; height: <%= _.size(popularHeaders) * 38 %>px">
+        <tbody class="headers-table" style="display: block; overflow: hidden;">
           <% _.each(popularHeaders, function(value, key) { %>
             <tr class="popular-header">
               <th><%- key %></th>
@@ -101,8 +98,11 @@
           <% }); %>
         </tbody>
         <tbody class="show-more-headers">
-          <tr>
-            <th colspan="2" class="show-more-headers-label">Show More...</th>
+          <tr class="show-more-headers-label" style="display: none">
+            <th colspan="2" >Show less</th>
+          </tr>
+          <tr class="show-more-headers-label">
+            <th colspan="2">Show <%= _.size(extraHeaders) %> more</th>
           </tr>
         </tbody>
       </table>

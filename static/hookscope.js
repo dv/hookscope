@@ -10,39 +10,65 @@ function setLabel(name, value) {
 function createRequestView(request) {
   var el = $($("#request-template").data("compiled")(request));
   var tbody = el.find(".headers-table");
-  var popularHeaders = tbody.find(".popular-header");
-  var extraHeaders = tbody.find(".extra-header");
-
-  var minHeight = popularHeaders.length * 38;
-  var maxHeight = (popularHeaders.length + extraHeaders.length) * 38;
 
   el.find(".show-more-headers").click(function() {
-    //el.find(".show-more-headers-label").toggle()
-    //el.find(".more-headers").toggle("customSlide", { direction: "up" }, 1000);
-
+    var minHeight = tbody.data("minSliderHeight");
+    var maxHeight = tbody.data("maxSliderHeight");
     var curHeight = tbody.height();
 
     if(curHeight == minHeight){
       tbody.animate({
         height: maxHeight
       }, 500);
-      
-      //$('#read-more a').html('Close');
-      //$('#gradient').fadeOut();
+
     } else {
       tbody.animate({
         height: minHeight
       }, "normal");
       
-      //$('#read-more a').html('Click to Read More');
-      //$('#gradient').fadeIn();
     }
-    //return false;
+    
+    el.find(".show-more-headers-label").toggle();
   });
 
   return el;
 }
 
+function calculateSliderHeights(el) {
+  var minHeight = 0;
+  var maxHeight = 0;
+
+  el.find(".popular-header").each(function(index, tr) {
+    minHeight += $(tr).height();
+  });
+
+  maxHeight = minHeight;
+
+  el.find(".extra-header").each(function(index, tr) {
+    maxHeight += $(tr).height();
+  });
+
+  // If first time, resize to minimum
+  if (el.data("minSliderHeight")) {
+    el.css("height", minHeight);
+  } else {
+    // Not first time so resize
+    if (el.height() == el.data("maxSliderHeight")) {
+      el.css("height", maxHeight);
+    } else {
+      el.css("height", minHeight);
+    }
+  }
+
+  el.data("minSliderHeight", minHeight);
+  el.data("maxSliderHeight", maxHeight);
+}
+
+$(window).resize(function() {
+  $(".headers-table").each(function(index, el) {
+    calculateSliderHeights($(el));
+  });
+});
 
 // Compile all the templates
 $(function() {
@@ -83,8 +109,10 @@ $(function() {
 
   socket.on('request', function(data) {
     console.log(data);
-    createRequestView(data).hide().prependTo("#requests").show("customSlide", { direction: "up" }, 1000);
+    var el = createRequestView(data).prependTo("#requests");
+    calculateSliderHeights(el.find(".headers-table"));
 
+    el.show("customSlide", { direction: "up" }, 1000);
     $(".easydate").easydate();
   });
 
