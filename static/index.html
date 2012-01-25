@@ -6,8 +6,8 @@
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
   <script src="jquery.customslide.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.2.2/underscore-min.js"></script>
+  <script src="http://twitter.github.com/bootstrap/1.4.0/bootstrap-dropdown.js"></script>
   <script src="jquery.easydate-0.2.4.min.js"></script>
-  <script src="jquery.actual.min.js"></script>
   <script src="http://github.com/dv/dollars/raw/master/dollars.js"></script>
   <script src="hookscope.js"></script>
   <style type="text/css">
@@ -26,6 +26,10 @@
 
     .request-query {
       color: #5789FF;
+    }
+
+    pre {
+      margin-bottom: 2px;
     }
   </style>
   <script type="text/template" id="request-template">
@@ -72,10 +76,18 @@
             </tr>
           </thead>
           <tbody>
-            <% _.each(body, function(value, key) { %>
+            <% _.each(body, function(value, key) { 
+              var isJson = false;
+              try {
+                value = JSON.stringify($.parseJSON(value), undefined, 2);
+                isJson = true;
+              } catch (e) { } 
+              %>
               <tr>
                 <th><%- key %></th>
-                <td><%- value %></td>
+                <td>
+                <% if (isJson) { %><pre><% } %><%- value %><% if (isJson) { %></pre><% } %>
+                </td>
               </tr>   
             <% }); %>
           </tbody>
@@ -123,7 +135,19 @@
         <div class="container">
           <a class="brand" href="#">Hookscope</a>
           <ul class="nav">
-            <li class="active"><a href="#">Channel <span data-label="channelname"></span></a></li>
+            <!-- <li class="active"><a href="#">Channel <span data-label="channelname"></span></a></li> -->
+            <li class="dropdown" data-dropdown="dropdown">
+              <a href="#" class="dropdown-toggle">Channel <span data-label="channelname"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Secondary link</a></li>
+                <li><form class="pull-left" action="">
+                  <input type="text" placeholder="Search" />
+                </form></li>
+                <li class="divider"></li>
+                <li><a href="#">Something else here</a></li>
+                <li><a href="#">Another link</a></li>
+              </ul>
+            </li>
             <li><a href="#" id="clear">Clear Requests</a></li>
             <li><a href="https://github.com/dv/hookscope">About</a></li>
             <li><a href="mailto:david@crowdway.com">Contact</a></li>

@@ -70,6 +70,11 @@ $(window).resize(function() {
   });
 });
 
+// Add dropdown functionality
+$(function() {
+  $('#topbar').dropdown();
+});
+
 // Compile all the templates
 $(function() {
   $("[type='text/template']").each(function(index, element) {
@@ -101,7 +106,7 @@ $(function() {
   socket.on('history', function(data) {
     for (var i = 0; i < data.length; i++) {
       if (console) { console.log(data[i]); }
-      
+
       var el = createRequestView(data[i]).appendTo("#requests");
       calculateSliderHeights(el.find(".headers-table"));
     }
