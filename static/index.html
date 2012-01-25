@@ -79,7 +79,7 @@
             <% _.each(body, function(value, key) { 
               var isJson = false;
               try {
-                value = JSON.stringify($.parseJSON(value), undefined, 2);
+                value = JSON.stringify(JSON.parse(value), undefined, 2);
                 isJson = true;
               } catch (e) { } 
               %>
