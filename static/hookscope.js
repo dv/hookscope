@@ -157,6 +157,7 @@ function sampleRequest(url) {
     type: "POST",
     data: {
       "sample-request": true,
+      "non-trivial-json": '{"datetime": "' + new Date() + '", "elements": ["car", "house", "casino"]}',
       "greeting": "I hope you're having fun playing with Hookscope!",
     }
   });
